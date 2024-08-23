@@ -1,4 +1,5 @@
 import Users from "../models/user.js"
+import { validateData } from "../utils/utility.js"
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -31,8 +32,11 @@ export const deleteUser = async (req, res) => {
 
 export const createUser = async (req, res) => {
     try {
-        const { name, age, email } = req.body
-        const user = await Users.create({ name, age, email })
+        const { name, age, email, password, gender } = req.body
+        console.log(name, age, email, password, gender)
+        let validation = validateData(["name", "age", "email", "password", "gender"], req?.body)
+        if (validation !== true) return validation
+        const user = await Users.create({ name, age, email, password, gender })
         return user
     } catch (error) {
         return { status: 0, message: error.message }
@@ -42,7 +46,9 @@ export const createUser = async (req, res) => {
 export const updateUser = async (req, res) => {
     try {
         const { id } = req.params
-        const user = await Users.findByIdAndUpdate(id, { $set: { age: 51 } })
+        const { name, age, email, password, gender } = req.body
+        console.log({ name, age, email, password, gender })
+        const user = await Users.findByIdAndUpdate(id, { name, age, email, password, gender })
         return user
     } catch (error) {
         return { status: 0, message: error.message }

@@ -28,6 +28,7 @@ app.get("/:id", async (req, res) => {
     }
 }).put("/:id", async (req, res) => {
     try {
+        console.log("object")
         let response = await updateUser(req, res)
         res.send({ status: 1, response })
     } catch (error) {
@@ -38,9 +39,11 @@ app.get("/:id", async (req, res) => {
 app.post("/create-user", async (req, res) => {
     try {
         let response = await createUser(req, res)
-        res.send({ status: 1, response })
+        console.log(response?.status)
+        res.send(response?.status ? { status: 1, response } : response)
+        // (response?.status) ? res.send({ status: 1, response }) : res.send(response)
     } catch (error) {
         res.send(error)
     }
 })
-export default app
+export default app;

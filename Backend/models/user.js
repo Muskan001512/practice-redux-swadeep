@@ -10,9 +10,23 @@ const userSchema = new Schema({
         required: true,
     },
     email: {
-        // unique: true,
+        unique: true,
         type: String,
         required: true,
+    },
+    gender: {
+        unique: true,
+        type: String,
+        required: true,
+    },
+    createdOn: {
+        type: Date,
+        default: Date.now(),
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
     }
 });
 
