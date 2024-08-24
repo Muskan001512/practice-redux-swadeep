@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { SignUpStyles } from "./style";
-import axios from "axios";
 import bootstrap from "bootstrap/dist/js/bootstrap.bundle.min.js";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { createUser, getAllUsers } from "../../../redux/Slices/UserSlice";
 
-function SignUp({ showToastMessage }) {
+function SignUp() {
+  const dispatch = useDispatch()
   const intialFormData = {
     name: "",
     dob: "",
@@ -18,9 +21,7 @@ function SignUp({ showToastMessage }) {
     var tooltipTriggerList = [].slice.call(
       document.querySelectorAll('[data-bs-toggle="tooltip"]')
     );
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
+    tooltipTriggerList.map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl));
   }, []);
 
   useEffect(() => {
@@ -86,7 +87,8 @@ function SignUp({ showToastMessage }) {
       errorField = "confirmPassword";
     }
     if (showMessage && errorMessage !== "") {
-      showToastMessage(errorMessage, "error");
+      // showToastMessage(errorMessage, "error");
+      toast.error(errorMessage)
     }
     document.querySelector(".error_field")?.classList.remove("error_field");
     document.getElementById(errorField)?.classList.add("error_field");
@@ -249,30 +251,17 @@ function SignUp({ showToastMessage }) {
                   ...formData,
                   age: calculateAge(formData.dob),
                 };
+                if (formData_?.['age'] < 0) {
+                  toast.error('Age must be greater than 0')
+                  return
+                }
                 delete formData_["dob"];
                 delete formData_["confirmPassword"];
-                axios
-                  .post(
-                    "http://localhost:5000/private/users/create-user",
-                    formData_
-                  )
-                  .then((res) => {
-                    console.log(res);
-                    if (res.status === 200) {
-                      if (
-                        res.data.status === 0 &&
-                        typeof res.data.message === "string"
-                      ) {
-                        showToastMessage(res.data.message, "error");
-                      } else {
-                        showToastMessage("User created successfully");
-                        setFormData(intialFormData);
-                      }
-                    } else {
-                      console.log("Some error occured!");
-                    }
-                  })
-                  .catch((err) => console.log(err));
+                dispatch(createUser(formData_)).unwrap().then(res => {
+                  console.log(res)
+                  res.status == 1 ? toast.success("User created successfully") : toast.error(res.message)
+                }).catch(err => toast.error(err))
+                dispatch(getAllUsers()).unwrap().then(res => console.log(res)).catch(err => console.log(err))
               }
             }}
           >
