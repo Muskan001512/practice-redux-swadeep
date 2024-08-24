@@ -23,7 +23,7 @@ const dbUrl = process.env.DB_URL;
 const JWTKEY = process.env.JWTKEY || "sanCHAY";
 app.use(express.json());
 app.use(fileUpload());
-console.log(dbUrl, "dbUrl");
+
 mongoose
   .connect(dbUrl)
   .then(() => {
