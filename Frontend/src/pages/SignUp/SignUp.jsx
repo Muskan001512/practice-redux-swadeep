@@ -1,276 +1,55 @@
-import { useEffect, useState } from "react";
-import { SignUpStyles } from "./style";
-import bootstrap from "bootstrap/dist/js/bootstrap.bundle.min.js";
-import { toast } from "react-toastify";
+import * as yup from "yup"
+import { ErrorMessage, Field, Form, Formik } from "formik"
 import { useDispatch } from "react-redux";
-import { createUser, getAllUsers } from "../../../redux/Slices/UserSlice";
-
-function SignUp() {
+import { userLogin } from "../../../redux/Slices/AuthSlice";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+const SignUp = () => {
   const dispatch = useDispatch()
-  const intialFormData = {
-    name: "",
-    dob: "",
-    email: "",
-    gender: "male",
-    password: "",
-    confirmPassword: "",
-  };
-  const [formData, setFormData] = useState(intialFormData);
-
+  const navigate = useNavigate()
+  console.log(localStorage.getItem("login"))
+  console.log(localStorage.getItem("login") == "true")
+  console.log(typeof localStorage.getItem("login"))
+  console.log(typeof localStorage)
   useEffect(() => {
-    var tooltipTriggerList = [].slice.call(
-      document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    );
-    tooltipTriggerList.map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl));
-  }, []);
+    if (localStorage.getItem("login") == "true") {
+      console.log("::")
+      navigate("/manage/venues");
+    }
+  }, [])
+  let userSchema = yup.object({
+    email: yup.string().email().required("Email is required"),
+    password: yup.string().required("Password is required")
+  });
 
-  useEffect(() => {
-    if (formData.confirmPassword !== "") {
-      if (formData.password !== formData.confirmPassword) {
-        document
-          .getElementById("confirmPassword")
-          ?.classList.add("error_field");
-        document
-          .getElementById("confirmPassword")
-          ?.classList.remove("feild_matched");
+  const handleSubmit = (values) => {
+    console.log(values);
+    dispatch(userLogin(values))?.unwrap().then(res => {
+      console.log(res, res?.status)
+      if (res?.status) {
+        console.log("object")
+        toast.info("Sucessfully Login")
+        localStorage.setItem("login", true)
+        navigate('/manage/venues')
       } else {
-        document
-          .getElementById("confirmPassword")
-          ?.classList.remove("error_field");
-        document
-          .getElementById("confirmPassword")
-          ?.classList.add("feild_matched");
+        console.log("object", res?.message)
+        toast.error(res?.message)
       }
-    }
-  }, [formData]);
+    }).catch(err => toast.error(err))
+  }
 
-  const validateFormData = (showMessage = false) => {
-    let errorMessage = "";
-    let errorField = "";
-    let { name, dob, email, password, confirmPassword } = formData;
-    name = name.trim();
-    dob = dob.trim();
-    email = email.trim();
-    password = password.trim();
-    confirmPassword = confirmPassword.trim();
-
-    if (name === "" || !validateName(name)) {
-      if (name === "") {
-        errorMessage = "Name is required";
-      } else if (!validateName(name)) {
-        errorMessage = "Only alphabets are allowed in name";
-      }
-      errorField = "name";
-    } else if (dob === "") {
-      errorMessage = "DOB is required";
-      errorField = "dob";
-    } else if (email === "" || !validateEmail(email)) {
-      if (email === "") {
-        errorMessage = "Email is required";
-      } else if (!validateEmail(email)) {
-        errorMessage = "Please  enter a valid email";
-      }
-      errorField = "email";
-    } else if (password === "" || !validatePassword(password)) {
-      if (password === "") {
-        errorMessage = "Password is required";
-      } else if (!validatePassword(password)) {
-        errorMessage = "Please enter a valid password";
-      }
-      errorField = "password";
-    } else {
-      if (confirmPassword === "") {
-        errorMessage = "Confirm password is required";
-      } else if (password !== confirmPassword) {
-        errorMessage = "Password and confirm password do not match";
-      }
-      errorField = "confirmPassword";
-    }
-    if (showMessage && errorMessage !== "") {
-      // showToastMessage(errorMessage, "error");
-      toast.error(errorMessage)
-    }
-    document.querySelector(".error_field")?.classList.remove("error_field");
-    document.getElementById(errorField)?.classList.add("error_field");
-    return errorMessage === "";
-  };
-
-  const validateName = (name) => {
-    const namePattern = /^[A-Za-z\s]+$/;
-    return namePattern.test(name);
-  };
-
-  const validateEmail = (email) => {
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailPattern.test(email);
-  };
-
-  const validatePassword = (password) => {
-    // Regular expression for validating a strong password
-    const passwordPattern =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-    // Test the password against the regular expression
-    return passwordPattern.test(password);
-  };
-
-  const calculateAge = (dob) => {
-    const birthDate = new Date(dob);
-    const today = new Date();
-
-    // Calculate the difference in years
-    let age = today.getFullYear() - birthDate.getFullYear();
-
-    // Adjust the age if the birth date hasn't occurred yet this year
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-
-    return age;
-  };
-
-  return (
-    <SignUpStyles>
-      <div className="form-section">
-        <div className="form-element" id="name">
-          <label htmlFor="name">Name</label>
-          <input
-            type="text"
-            value={formData.name}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                name: e.target.value,
-              })
-            }
-            required
-          />
-        </div>
-        <div className="form-element" id="dob">
-          <label htmlFor="age">DOB</label>
-          <input
-            type="date"
-            value={formData.dob}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                dob: e.target.value,
-              })
-            }
-            required
-          />
-        </div>
-      </div>
-      <div className="form-section">
-        <div className="form-element" id="gender">
-          <label htmlFor="gender">Gender</label>
-          <select
-            value={formData.gender}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                gender: e.target.value,
-              })
-            }
-            required
-          >
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">choose not to disclose</option>
-          </select>
-        </div>
-        <div className="form-element" id="email">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            value={formData.email}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                email: e.target.value,
-              })
-            }
-            required
-          />
-        </div>
-      </div>
-      <div className="form-section">
-        <div className="form-element" id="password">
-          <label
-            htmlFor="password"
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            title="1. Minimum 8 characters. 
-                   2. At least one uppercase letter. 
-3. At least one lowercase letter. 
-4. At least one number.
-5. At least one special character (e.g., @, #, $, etc.)."
-          >
-            Password
-          </label>
-          <input
-            type="password"
-            value={formData.password}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                password: e.target.value,
-              })
-            }
-            required
-          />
-        </div>
-        <div className="form-element" id="confirmPassword">
-          <label htmlFor="confirm_password">Confirm password</label>
-          <input
-            type="password"
-            value={formData.confirmPassword}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                confirmPassword: e.target.value,
-              })
-            }
-            required
-          />
-        </div>
-      </div>
-      <div className="form-section">
-        <div className="form-element">
-          <button
-            type="button"
-            id="submit-new-user"
-            className="btn btn-primary"
-            onClick={() => {
-              if (validateFormData(true)) {
-                let formData_ = {
-                  ...formData,
-                  age: calculateAge(formData.dob),
-                };
-                if (formData_?.['age'] < 0) {
-                  toast.error('Age must be greater than 0')
-                  return
-                }
-                delete formData_["dob"];
-                delete formData_["confirmPassword"];
-                dispatch(createUser(formData_)).unwrap().then(res => {
-                  console.log(res)
-                  res.status == 1 ? toast.success("User created successfully") : toast.error(res.message)
-                }).catch(err => toast.error(err))
-                dispatch(getAllUsers()).unwrap().then(res => console.log(res)).catch(err => console.log(err))
-              }
-            }}
-          >
-            Sign up
-          </button>
-        </div>
-      </div>
-    </SignUpStyles>
-  );
+  return (<Formik initialValues={{ email: "", password: "" }}
+    onSubmit={handleSubmit}
+    validationSchema={userSchema}>
+    <Form >
+      <Field type="email" name="email" />
+      <ErrorMessage name="email" />
+      <Field type="password" name="password" />
+      <ErrorMessage name="password" />
+      <button type="submit">Login</button>
+    </Form>
+  </Formik>);
 }
 
 export default SignUp;

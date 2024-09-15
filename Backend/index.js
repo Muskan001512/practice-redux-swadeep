@@ -10,10 +10,12 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import cors from "cors";
+import Users from "./models/user.js";
+import { uploadMultipleImages } from "./utils/utility.js";
 
 // Obtain __filename and __dirname
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+export const __dirname = dirname(__filename);
 const app = express();
 app.use(cors());
 dotenv.config();
@@ -22,6 +24,7 @@ const port = process.env.PORT || 5000;
 const dbUrl = process.env.DB_URL;
 const JWTKEY = process.env.JWTKEY || "sanCHAY";
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
 app.use(fileUpload());
 
 mongoose
@@ -33,13 +36,38 @@ mongoose
     });
   })
   .catch((err) => console.log("Errorrrrrrrrrrrrrrrrrrr", err, err.message));
-app.post("/login", (req, res) => {
-  console.log("object");
-  JWT.sign(req.body, JWTKEY, { expiresIn: "2h" }, (err, token) => {
-    if (err) res.send(err);
-    else res.send(token);
-  });
-});
+// app.post("/login", (req, res) => {
+//   console.log("object");
+//   JWT.sign(req.body, JWTKEY, { expiresIn: "2h" }, (err, token) => {
+//     if (err) res.send(err);
+//     else res.send(token);
+//   });
+// });
+app.post('/login', async (req, res) => {
+  try {
+    console.log(req?.body)
+    const { email, password } = req?.body
+    let user = await Users.findOne({ email })
+    console.log(user, "user", !user)
+    if (!user) {
+      res.json({ status: 0, message: 'User not found, Please signup' });
+    } else {
+      if (user?.password == password) {
+        return res.json({ status: 1, user, message: "User Verified" })
+      } else {
+        res.json({ status: 0, message: 'Incorrect password' });
+      }
+    }
+  }
+  catch (err) {
+    return res.send(err)
+  }
+})
+
+app.post('/signup', async (req, res) => {
+  const path = uploadMultipleImages(req, res)
+})
+
 app.post("/upload", authentication, (req, res) => {
   console.log(req.files);
   console.log("req.files");

@@ -1,3 +1,7 @@
+:root{
+  --primary : #e74c3cab
+}
+
 * {
   margin: 0;
   padding: 0;

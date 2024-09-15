@@ -3,7 +3,7 @@ import { createUser, deleteUser, getAllUsers, getUser, updateUser } from "../con
 
 const app = express()
 
-app.get("/all", async (req, res) => {
+app.get("/get-all-users", async (req, res) => {
     try {
         let response = await getAllUsers(req, res)
         res.send(response)

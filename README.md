@@ -1,2 +1,0 @@
-# Practice
-Food ordering app

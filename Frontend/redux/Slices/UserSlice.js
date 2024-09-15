@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const getAllUsers = createAsyncThunk("getAllUsers", async () => {
     try {
-        const response = await axios.get("http://localhost:5000/private/users/all")
+        const response = await axios.get("http://localhost:5000/private/users/get-all-users")
         return response.data
     } catch (error) {
         return error
