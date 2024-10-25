@@ -10,7 +10,6 @@ const CreateVenue = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const params = useParams()
-    console.log(params, "params")
     const userId = useSelector(state => state?.auth?.userData?._id)
     const [initialValues, setInitialValues] = useState({
         name: "",
