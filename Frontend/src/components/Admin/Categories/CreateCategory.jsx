@@ -2,7 +2,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik'
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import * as yup from 'yup'
+import { string, object } from 'yup'
 import { createCategory, getCategory, updateCategory } from '../../../../redux/Slices/CategorySlice'
 import { toast } from "react-toastify"
 
@@ -14,8 +14,8 @@ const CreateCategory = () => {
         name: "",
         status: true
     })
-    const validaton = yup.object().shape({
-        name: yup.string().required("Name is required"),
+    const validaton = object().shape({
+        name: string().required("Name is required"),
     })
     console.log(params)
     useEffect(() => {
@@ -42,9 +42,7 @@ const CreateCategory = () => {
                 if (res?.status) {
                     toast.success(res?.message)
                     navigate(`/manage/venues/${params?.slug}/items`)
-                } else {
-                    toast.error(res?.message)
-                }
+                } else toast.error(res?.message)
             }).catch(err => console.log(err))
         }}
     >

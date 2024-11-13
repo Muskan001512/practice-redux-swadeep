@@ -36,13 +36,7 @@ mongoose
     });
   })
   .catch((err) => console.log("Errorrrrrrrrrrrrrrrrrrr", err, err.message));
-// app.post("/login", (req, res) => {
-//   console.log("object");
-//   JWT.sign(req.body, JWTKEY, { expiresIn: "2h" }, (err, token) => {
-//     if (err) res.send(err);
-//     else res.send(token);
-//   });
-// });
+
 app.post('/login', async (req, res) => {
   try {
     console.log(req?.body)
@@ -105,7 +99,7 @@ app.post("/upload", authentication, (req, res) => {
     }
     // res.send(`File uploaded successfully: ${path.basename(uploadPath)}`);
   });
-  res.send("Loki ki loki bhot badi hai...!");
+  res.send("error...!");
 });
 // app.use(authentication)
 app.use("/private", privateRoute);

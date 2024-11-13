@@ -55,24 +55,7 @@ export const uploadMultipleImages = (req, res) => {
         console.log(false)
     }
     res.send(pathArray)
-    // if (!req.files || !req.files.file) return
-    // const file = req.files.sex;
-    // console.log(file, "file");
-    // const uploadPath = path.join(__dirname, `../frontend/public/uploads/${slug}/products`, path.extname(file.name));
-    // console.log(uploadPath, "uploadPath", fs.existsSync("uploads"));
-
-    // if (!fs.existsSync(path.dirname(uploadPath))) {
-    //     fs.mkdirSync(path.dirname(uploadPath), { recursive: true });
-    // }
-    // res.send("Run Successfully")
-
-    // file.mv(uploadPath, (err) => {
-    //     if (err) {
-    //         return res.status(500).send(err);
-    //     }
-    // });
-    // console.log(req?.body)
-    // return `uploads/${path.basename(uploadPath)}`
+   
 }
 
 

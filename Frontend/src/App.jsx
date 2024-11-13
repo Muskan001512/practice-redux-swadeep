@@ -6,12 +6,14 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../public/Global_CSS/App.css";
 import { getVenue } from "../redux/Slices/VenueSlice";
-import VenueListing from "./components/Admin/Venues/VenueListing";
-import AdminLayout from "./layouts/AdminLayout";
-import CreateVenue from "./components/Admin/Venues/CreateVenue";
 import CategoryListing from "./components/Admin/Categories/CategoryListing";
 import CreateCategory from "./components/Admin/Categories/CreateCategory";
 import CreateProduct from "./components/Admin/Products/CreateProduct";
+import CreateVenue from "./components/Admin/Venues/CreateVenue";
+import VenueListing from "./components/Admin/Venues/VenueListing";
+import AdminLayout from "./layouts/AdminLayout";
+import SignUp from "./pages/SignUp/SignUp";
+
 
 function App() {
   const dispatch = useDispatch()
@@ -24,10 +26,10 @@ function App() {
   }, [])
   return (
     <div className="App">
-      {/* <SignUp /> */}
       {/* <BrowserRouter> */}
       <Routes>
-        {/* <Route path="/admin" element={<AdminLayout><SignUp /></AdminLayout>} /> */}
+      <Route path="/signup" element={<AdminLayout children={<SignUp />} />} />
+
         <Route path="/manage/venues" element={<AdminLayout children={<VenueListing />} />} />
         <Route path="/manage/venues/add" element={<AdminLayout children={<CreateVenue />} />} />
         <Route path="/manage/venues/edit/:slug" element={<AdminLayout children={<CreateVenue />} />} />

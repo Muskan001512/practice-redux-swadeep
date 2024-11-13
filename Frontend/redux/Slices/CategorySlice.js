@@ -44,7 +44,6 @@ export const deleteCategory = createAsyncThunk('deleteCategory', async (id) => {
 
 export const updateCategory = createAsyncThunk('updateCategory', async ({ id, values }) => {
     try {
-        // console.log(slug, values, "peldo")
         const response = await axios.put(`http://localhost:5000/private/category/${id}`, values)
         return response.data
     } catch (error) {
@@ -65,48 +64,48 @@ const categorySlice = createSlice({
         builder.addCase(getAllCategories.pending, (state) => {
             state.loading = true
         })
-        builder.addCase(getAllCategories.fulfilled, (state, action) => {
+        .addCase(getAllCategories.fulfilled, (state, action) => {
             state.loading = false
             console.log(action?.payload)
             state.venueData = action?.payload?.status ? action.payload.venue : {}
         })
-        builder.addCase(getAllCategories.rejected, (state, action) => {
+        .addCase(getAllCategories.rejected, (state, action) => {
             state.loading = true
         })
-        builder.addCase(createCategory.pending, (state) => {
+        .addCase(createCategory.pending, (state) => {
             state.loading = true
         })
-        builder.addCase(createCategory.fulfilled, (state) => {
+        .addCase(createCategory.fulfilled, (state) => {
             state.loading = false
         })
-        builder.addCase(createCategory.rejected, (state) => {
+        .addCase(createCategory.rejected, (state) => {
             state.loading = true
         })
-        builder.addCase(deleteCategory.pending, (state) => {
+        .addCase(deleteCategory.pending, (state) => {
             state.loading = true
         })
-        builder.addCase(deleteCategory.fulfilled, (state) => {
+        .addCase(deleteCategory.fulfilled, (state) => {
             state.loading = false
         })
-        builder.addCase(deleteCategory.rejected, (state) => {
+        .addCase(deleteCategory.rejected, (state) => {
             state.loading = true
         })
-        builder.addCase(getCategory.pending, (state) => {
+        .addCase(getCategory.pending, (state) => {
             state.loading = true
         })
-        builder.addCase(getCategory.fulfilled, (state) => {
+        .addCase(getCategory.fulfilled, (state) => {
             state.loading = false
         })
-        builder.addCase(getCategory.rejected, (state) => {
+        .addCase(getCategory.rejected, (state) => {
             state.loading = true
         })
-        builder.addCase(updateCategory.pending, (state) => {
+        .addCase(updateCategory.pending, (state) => {
             state.loading = true
         })
-        builder.addCase(updateCategory.fulfilled, (state) => {
+        .addCase(updateCategory.fulfilled, (state) => {
             state.loading = false
         })
-        builder.addCase(updateCategory.rejected, (state) => {
+        .addCase(updateCategory.rejected, (state) => {
             state.loading = true
         })
     }

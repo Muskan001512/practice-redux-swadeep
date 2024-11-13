@@ -9,8 +9,7 @@ export default function useCustomSelector(args) {
     if (!key) throw new Error(`useCustomSelector: Expected a valid store key but received none. Please provide a valid key.`);
 
     const customState = useSelector(({ [key]: val }) => val);
-    // const customState = useSelector(state => state?.[val]);
     if (!customState) throw new Error(`useCustomSelector: Unable to access the store key '${key}'. It may not exist in the Redux store.`);
 
-    return state ? customState[state] : customState;
+    return state ? customState?.[state] : customState;
 }
