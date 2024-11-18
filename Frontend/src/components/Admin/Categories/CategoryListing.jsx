@@ -28,7 +28,7 @@ const CategoryListing = () => {
         {
             Header: "Delete",
             accessor: "___",
-            Cell: (props) => ( // Accept 'props' as an argument
+            Cell: (props) => (
                 <h5 onClick={() => {
                     console.log(props);
                     dispatch(deleteCategory(props?.row?.original?._id))
